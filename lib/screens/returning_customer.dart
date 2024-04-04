@@ -1,0 +1,92 @@
+import 'package:crm_david/models/current_customer.dart';
+import 'package:crm_david/models/load_data.dart';
+import 'package:crm_david/screens/new_customer.dart';
+import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
+
+class ReturningCustomerScreen extends StatefulWidget {
+  static const routeName = "/newC";
+
+  const ReturningCustomerScreen({super.key});
+
+  @override
+  State<ReturningCustomerScreen> createState() =>
+      _ReturningCustomerScreenState();
+}
+
+class _ReturningCustomerScreenState extends State<ReturningCustomerScreen> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController mobileNumberController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("New Customer"),
+        backgroundColor: Colors.blue,
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomTextField(
+            controller: firstNameController,
+            label: "What is your first name?",
+            hint: "First name",
+            onSubmit: () {},
+            icon: Icons.person,
+          ),
+          CustomTextField(
+            controller: lastNameController,
+            label: "What is your last name?",
+            hint: "Last name",
+            onSubmit: () {},
+            icon: Icons.person,
+          ),
+          CustomTextField(
+            controller: mobileNumberController,
+            label: "What is your phone number?",
+            hint: "Phone Number",
+            onSubmit: () {},
+            isNumber: true,
+            icon: Icons.phone,
+          ),
+          CustomTextField(
+            controller: emailController,
+            label: "What is your email?",
+            hint: "Email",
+            onSubmit: () {},
+            icon: Icons.email,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          FilledButton(
+            onPressed: () async {
+              // Add to DB
+              var result = await Provider.of<CurrentCustomerModel>(context,
+                      listen: false)
+                  .newCustomer(
+                CustomerData(
+                  name:
+                      "${firstNameController.text} ${lastNameController.text}",
+                  number: mobileNumberController.text,
+                  email: emailController.text,
+                ),
+              );
+
+              showToast(
+                "Result is $result",
+                position: ToastPosition.bottom,
+              );
+            },
+            child: const Text("Insert"),
+          ),
+        ],
+      ),
+    );
+  }
+}
