@@ -1,5 +1,4 @@
 import 'package:crm_david/models/current_customer.dart';
-import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
@@ -73,7 +72,8 @@ class _ReturningCustomerScreenState extends State<ReturningCustomerScreen> {
                 CustomerData(
                   name:
                       "${firstNameController.text} ${lastNameController.text}",
-                  number: mobileNumberController.text,
+                  phone: mobileNumberController.text,
+                  mobile: mobileNumberController.text,
                   email: emailController.text,
                 ),
               );

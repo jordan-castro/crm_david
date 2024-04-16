@@ -1,8 +1,7 @@
-import 'package:crm_david/models/current_customer.dart';
+import 'package:crm_david/screens/settings.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:crm_david/screens/returning_customer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static const routeName = "/welcomeScreen";
@@ -11,8 +10,6 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CurrentCustomerModel>(context, listen: false).init();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome!"),
@@ -51,6 +48,26 @@ class WelcomeScreen extends StatelessWidget {
                 width: 250,
                 child: Text(
                   "Returning Customer",
+                  style: TextStyle(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                    (states) => const Color.fromARGB(255, 240, 217, 243)),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, DatabaseConfigScreen.routeName);
+              },
+              child: SizedBox(
+                width: 250,
+                child: Text(
+                  "Settings",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 ),

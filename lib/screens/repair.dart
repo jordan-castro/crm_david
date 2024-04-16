@@ -1,6 +1,7 @@
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart';
 
@@ -30,7 +31,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO: removethis
-    Provider.of<LoadData>(context, listen: false).init();
+    // Provider.of<LoadData>(context, listen: false).init();
 
     return Scaffold(
       appBar: AppBar(
@@ -187,9 +188,54 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // ADD TO DB
-                  
+                  final loadData =
+                      Provider.of<LoadData>(context, listen: false);
+                  final part = loadData.parts[loadData.partId];
+                  final res = await loadData.addProductToService(
+                    part: Part(
+                      description: part.description,
+                      productId: part.productId,
+                      qty: int.parse(qty.text),
+                      unitPrice: double.parse(qty.text) * part.unitPrice,
+                    ),
+                  );
+
+                  if (!res) {
+                    showToast(
+                      "Did not work",
+                      position: ToastPosition.bottom,
+                    );
+                  }
+
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Part added succesffuly."),
+                          content: Text("Would you like to add a new part?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: Text("No"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.popAndPushNamed(
+                                  context,
+                                  RepairPartsScreen.routeName,
+                                );
+                              },
+                              child: Text("Yes"),
+                            )
+                          ],
+                        );
+                      });
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith(

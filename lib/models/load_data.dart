@@ -1,9 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:crm_david/api.dart';
 import 'package:crm_david/models/current_customer.dart';
-import 'package:crm_david/utils/server_db.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql_client/mysql_client.dart';
 
 /// in DB is `brand`
 class Manufacture {
@@ -112,7 +111,6 @@ class TicketData {
 }
 
 class LoadData with ChangeNotifier {
-  MySQLConnection? conn;
   List<Manufacture> manufacturers = [];
   List<Model> models = [];
   List<Technician> techs = [];
@@ -120,6 +118,8 @@ class LoadData with ChangeNotifier {
   List<Part> parts = [];
   RMA currentRMA = RMA(id: "0");
   TicketData? currentTicket;
+  int currentServiceId = -1;
+  JSONArray settings = [];
 
   int manId = 0;
   int modelId = 0;
@@ -135,159 +135,130 @@ class LoadData with ChangeNotifier {
     return list;
   }
 
-  Future<void> init() async {
-    conn = await connectMySQL();
-    await conn!.connect();
-    notifyListeners();
-  }
-
-  bool isConnected() {
-    return conn?.connected ?? false;
-  }
-
   Future<void> loadManufactures() async {
-    if (!isConnected()) {
-      return;
-    }
-
-    var results = await conn!.execute("SELECT * FROM `brand`");
-    if (results.numOfRows == 0) {
+    var results = await getManufactures();
+    if (results.isEmpty) {
       return;
     }
 
     manufacturers.clear();
-
-    for (var row in results.rows) {
-      manufacturers.add(
-        Manufacture(
-          id: int.parse(row.colAt(0)!),
-          brand_name: row.colAt(1)!,
-        ),
-      );
-    }
+    manufacturers = results;
 
     notifyListeners();
   }
 
-  Future<void> loadModels() async {
-    if (!isConnected()) {
-      return;
-    }
+  Future<void> loadSettings() async {
+    final result = await getSettings();
+    settings = result;
+    notifyListeners();
+  }
 
-    var results = await conn!.execute("SELECT * FROM `devices`");
-    if (results.numOfRows == 0) {
+  Future<void> loadModels() async {
+    final result = await getModels();
+    if (result.isEmpty) {
       return;
     }
 
     models.clear();
+    models = result;
 
-    for (var row in results.rows) {
-      models.add(
-        Model(
-          id: int.parse(row.colAt(0)!),
-          name: row.colAt(1)!,
-        ),
-      );
-    }
+    // var results = await conn!.execute("SELECT * FROM `devices`");
+    // if (results.numOfRows == 0) {
+    //   return;
+    // }
+
+    // models.clear();
+
+    // for (var row in results.rows) {
+    //   models.add(
+    //     Model(
+    //       id: int.parse(row.colAt(0)!),
+    //       name: row.colAt(1)!,
+    //     ),
+    //   );
+    // }
 
     notifyListeners();
   }
 
   Future<void> loadTechnicians() async {
-    if (!isConnected()) {
-      return;
-    }
-
-    var results = await conn!.execute("SELECT * FROM `technicians`");
-    if (results.numOfRows == 0) {
+    final result = await getTechs();
+    if (result.isEmpty) {
       return;
     }
 
     techs.clear();
+    techs = result;
 
-    for (var row in results.rows) {
-      techs.add(
-        Technician(
-          id: int.parse(row.colAt(0)!),
-          tech_name: row.colAt(1)!,
-          email: row.colAt(2)!,
-          username: row.colAt(3)!,
-          password: row.colAt(4)!,
-        ),
-      );
-    }
+    // if (!isConnected()) {
+    //   return;
+    // }
+
+    // var results = await conn!.execute("SELECT * FROM `technicians`");
+    // if (results.numOfRows == 0) {
+    //   return;
+    // }
+
+    // techs.clear();
+
+    // for (var row in results.rows) {
+    //   techs.add(
+    //     Technician(
+    //       id: int.parse(row.colAt(0)!),
+    //       tech_name: row.colAt(1)!,
+    //       email: row.colAt(2)!,
+    //       username: row.colAt(3)!,
+    //       password: row.colAt(4)!,
+    //     ),
+    //   );
+    // }
 
     notifyListeners();
   }
 
   Future<void> loadAccessories() async {
-    if (!isConnected()) {
-      return;
-    }
-
-    var results = await conn!.execute(
-      "SELECT `value` FROM `settings` WHERE `name` = :name",
-      {
-        "name": "included_accessories",
-      },
-    );
-
-    if (results.numOfRows != 1) {
-      return;
-    }
-
+    final result = await getAccessories();
     accesories.clear();
-
-    print(results.rows.first.numOfColumns);
-
-    for (var val in results.rows.first.colAt(0)!.split(",")) {
-      accesories.add(Accessory(label: val));
-    }
-
+    accesories = result;
     notifyListeners();
   }
 
   Future<void> loadParts() async {
-    if (!isConnected()) {
-      return;
-    }
-
-    var results = await conn!.execute("SELECT * FROM product_service");
-    if (results.numOfRows == 0) {
+    final result = await getParts();
+    if (result.isEmpty) {
       return;
     }
 
     parts.clear();
-
-    for (var val in results.rows) {
-      parts.add(
-        Part(
-          description: val.colByName("description")!,
-          productId: int.parse(val.colByName("productId")!),
-          qty: double.parse(val.colByName("qty")!).toInt(),
-          unitPrice: double.parse(val.colByName("unitPrice")!),
-        ),
-      );
-    }
+    parts = result;
 
     notifyListeners();
   }
 
   Future<RMA?> getMostRecentRMA() async {
     // COMES FROM `increment_services`
-    if (!isConnected()) {
-      return null;
-    }
+    // if (!isConnected()) {
+    // return null;
+    // }
 
-    var results = await conn!.execute(
-      "SELECT * FROM `increment_services` ORDER BY `id` DESC LIMIT 1",
-    );
-    if (results.numOfRows == 0) {
+    // var results = await conn!.execute(
+    //   "SELECT * FROM `increment_services` ORDER BY `id` DESC LIMIT 1",
+    // );
+    // if (results.numOfRows == 0) {
+    //   return null;
+    // }
+
+    // return RMA(
+    //   id: results.rows.first.colByName("rmaid")!,
+    // );
+
+    final result = await getMostRecentRMA_ServerCall();
+    if (result == null) {
       return null;
     }
 
     return RMA(
-      id: results.rows.first.colByName("rmaid")!,
+      id: result,
     );
   }
 
@@ -295,73 +266,65 @@ class LoadData with ChangeNotifier {
     required CustomerData customer,
     required TicketData ticketData,
   }) async {
-    if (!isConnected()) {
-      return false;
-    }
-
     // new RMA
     final rma = await RMA.createRMA(this);
     if (rma == null) {
+      print("HERE");
       return false;
     }
 
-    // Create new service
-    var res = await conn!.execute("""
-      INSERT INTO `services` 
-      (`clientid`, `rmaid`, `clientname`, `phone`, `opendate`, `description`, `serialnumber`, `technician`, `accessories`, `technicianid`, 
-      `warrantyid`, `statusid`
-      )
-      VALUES
-      (:clientid, :rmaid, :clientname, :phone, :opendate, :description, :serialnumber, :technician, :accessories, :technicianid, :warranty,
-      :status
-      );
-    """, {
-      "clientid": customer.id,
-      "rmaid": rma.id,
-      "clientname": customer.name,
-      "phone": customer.number,
-      "opendate": rma.dateTime.toString().split(".")[0],
-      "description": ticketData.description,
-      "serialnumber": ticketData.serialNumber,
-      "technician": ticketData.technician.tech_name,
-      "accessories": ticketData.accessories.join(","),
-      "technicianid": ticketData.technician.id,
-      "warranty": 1,
-      "status": 1,
-    });
-    if (res.affectedRows.toInt() == 0) {
-      print("ERROR adding service");
-      return false;
-    }
-
-    // Get service id
-    res = await conn!.execute(
-      "SELECT * FROM services ORDER BY id DESC LIMIT 1",
+    // Create service
+    final serviceCreated = await setInsertService(
+      customer: customer,
+      ticketData: ticketData,
+      currentRma: rma,
     );
-    if (res.numOfRows == 0) {
-      print("ERROR could not getr service");
+
+    if (!serviceCreated) {
+      print("HERE 2");
+      return false;
+    }
+
+    // Get service Id
+    final serviceId = await getLastServiceId();
+    if (serviceId == -1) {
+      print("HERE 3");
+
       return false;
     }
 
     // Save RMA
-    res = await conn!.execute(
-      "INSERT INTO `increment_services` (`service_id`, `rmaid`, `number`) VALUES (:service, :rma, :num);",
-      {
-        "service": res.rows.first.colAt(0),
-        "rma": rma.id,
-        "num": rma.id.split("-").last,
-      },
+    final rmaSaved = await setSaveRMA(
+      serviceId: serviceId,
+      rma: rma,
     );
-    if (res.affectedRows.toInt() == 0) {
-      print("ERROR could not add increment_service");
+
+    if (!rmaSaved) {
+      print("HERE 4");
       return false;
     }
 
+    // Set currentRMA
     currentRMA = rma;
     currentTicket = ticketData;
+    currentServiceId = serviceId;
     notifyListeners();
-
     return true;
+  }
+
+  Future<bool> addProductToService({
+    required Part part,
+  }) async {
+    if (currentServiceId == -1) {
+      return false;
+    }
+
+    final productInserted = await setAddProductToService(
+      part: part,
+      serviceId: currentServiceId,
+    );
+
+    return productInserted;
   }
 
   void update() {

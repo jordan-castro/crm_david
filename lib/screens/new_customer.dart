@@ -1,10 +1,10 @@
 import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/create_ticket.dart';
-import 'package:crm_david/utils/server_db.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart';
 
 class NewCustomerScreen extends StatefulWidget {
   static const routeName = "/returning";
@@ -16,9 +16,15 @@ class NewCustomerScreen extends StatefulWidget {
 }
 
 class _NewCustomerScreenState extends State<NewCustomerScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController numberController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  int customerIndex = 0;
+  final TextStyle labelStyle = const TextStyle(
+    fontSize: 20.0,
+    fontWeight: FontWeight.bold,
+  );
+
+  final nameController = SearchableDropdownController();
+  final emailController = SearchableDropdownController();
+  final phoneNumberController = SearchableDropdownController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,59 +33,179 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
         title: const Text("Returning Customer"),
         backgroundColor: Colors.blue,
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CustomTextField(
-            controller: nameController,
-            label: "What is your name?",
-            hint: "Name",
-            onSubmit: () {},
-            icon: Icons.person,
-          ),
-          CustomTextField(
-            controller: numberController,
-            label: "What is your phone number?",
-            hint: "Phone Number",
-            onSubmit: () {},
-            isNumber: true,
-            icon: Icons.phone,
-          ),
-          CustomTextField(
-            controller: emailController,
-            label: "What is your email?",
-            hint: "Email",
-            onSubmit: () {},
-            icon: Icons.email,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          FilledButton(
-            onPressed: () async {
-              showToast(
-                "Searching MySQL DB...",
-                position: ToastPosition.bottom,
-              );
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Search by Name",
+              style: labelStyle,
+            ),
+            Consumer<CurrentCustomerModel>(
+              builder: (context, customerModel, child) {
+                if (customerModel.allCustomers.isEmpty) {
+                  customerModel.loadCustomers();
+                  return child!;
+                }
 
-              var result = await Provider.of<CurrentCustomerModel>(
-                context,
-                listen: false,
-              ).loadFromData(
-                CustomerData(
-                  name: nameController.text,
-                  number: numberController.text,
-                  email: emailController.text,
-                ),
-              );
+                return SearchableDropdown(
+                  value: customerIndex,
+                  controller: nameController,
+                  items: [
+                    for (var customer in customerModel.allCustomers)
+                      SearchableDropdownMenuItem(
+                        label: customer.name,
+                        child: Text(customer.name),
+                        value: customerModel.allCustomers.indexOf(customer),
+                      ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      customerIndex = value!;
+                      emailController.selectedItem.value =
+                          emailController.items![value];
+                      phoneNumberController.selectedItem.value =
+                          phoneNumberController.items![value];
+                    });
+                  },
+                  backgroundDecoration: (child) => Card(
+                    margin: EdgeInsets.zero,
+                    color: Colors.blueGrey[100],
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: child,
+                    ),
+                  ),
+                );
+              },
+              child: const CircularProgressIndicator(),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Search by email",
+              style: labelStyle,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Consumer<CurrentCustomerModel>(
+              builder: (context, customerModel, child) {
+                if (customerModel.allCustomers.isEmpty) {
+                  customerModel.loadCustomers();
+                  return child!;
+                }
 
-              print(result);
+                return SearchableDropdown(
+                  value: customerIndex,
+                  controller: emailController,
+                  items: [
+                    for (var customer in customerModel.allCustomers)
+                      SearchableDropdownMenuItem(
+                        label: customer.email,
+                        child: Text(customer.email),
+                        value: customerModel.allCustomers.indexOf(customer),
+                      ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      customerIndex = value!;
+                      nameController.selectedItem.value =
+                          nameController.items![value];
+                      phoneNumberController.selectedItem.value =
+                          phoneNumberController.items![value];
+                    });
+                  },
+                  backgroundDecoration: (child) => Card(
+                    margin: EdgeInsets.zero,
+                    color: Colors.blueGrey[100],
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: child,
+                    ),
+                  ),
+                );
+              },
+              child: const CircularProgressIndicator(),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Search by Phone Number",
+              style: labelStyle,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Consumer<CurrentCustomerModel>(
+              builder: (context, customerModel, child) {
+                if (customerModel.allCustomers.isEmpty) {
+                  customerModel.loadCustomers();
+                  return child!;
+                }
 
-              // We gotem, lets change screen
-              if (result) {
+                return SearchableDropdown(
+                  value: customerIndex,
+                  controller: phoneNumberController,
+                  items: [
+                    for (var customer in customerModel.allCustomers)
+                      SearchableDropdownMenuItem(
+                        label: customer.getNumber(),
+                        child: Text(customer.getNumber()),
+                        value: customerModel.allCustomers.indexOf(customer),
+                      ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      customerIndex = value!;
+                      nameController.selectedItem.value =
+                          nameController.items![value];
+                      emailController.selectedItem.value =
+                          emailController.items![value];
+                    });
+                  },
+                  backgroundDecoration: (child) => Card(
+                    margin: EdgeInsets.zero,
+                    color: Colors.blueGrey[100],
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: child,
+                    ),
+                  ),
+                );
+              },
+              child: const CircularProgressIndicator(),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            FilledButton(
+              onPressed: () async {
+                showToast(
+                  "Searching MySQL DB...",
+                  position: ToastPosition.bottom,
+                );
+
+                final ccModel =
+                    Provider.of<CurrentCustomerModel>(context, listen: false);
+
+                final customer = ccModel.allCustomers[customerIndex];
+                // We gotem, lets change screen
+                ccModel.setCustomerData(customer);
                 // Load data
-                await Provider.of<LoadData>(context, listen: false).init();
+                // await Provider.of<LoadData>(context, listen: false).init();
                 Provider.of<LoadData>(
                   context,
                   listen: false,
@@ -97,11 +223,11 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   context,
                   CreateTicketScreen.routeName,
                 );
-              }
-            },
-            child: Text("Search"),
-          ),
-        ],
+              },
+              child: Text("Search"),
+            ),
+          ],
+        ),
       ),
     );
   }

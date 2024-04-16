@@ -2,6 +2,7 @@ import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/ask_to_print.dart';
 import 'package:crm_david/screens/create_ticket.dart';
+import 'package:crm_david/screens/settings.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:crm_david/screens/print_screen.dart';
 import 'package:crm_david/screens/repair.dart';
@@ -43,6 +44,8 @@ class CRMDavidApp extends StatelessWidget {
             AskToPringScreen.routeName: (context) => const AskToPringScreen(),
             RepairPartsScreen.routeName: (context) => const RepairPartsScreen(),
             PrintScreen.routeName: (context) => const PrintScreen(),
+            DatabaseConfigScreen.routeName: (context) =>
+                const DatabaseConfigScreen(),
           },
         ),
       ),
