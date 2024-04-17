@@ -66,9 +66,10 @@ class _ReturningCustomerScreenState extends State<ReturningCustomerScreen> {
           FilledButton(
             onPressed: () async {
               // Add to DB
-              var result = await Provider.of<CurrentCustomerModel>(context,
-                      listen: false)
-                  .newCustomer(
+              var result = await Provider.of<CurrentCustomerModel>(
+                context,
+                listen: false,
+              ).newCustomer(
                 CustomerData(
                   name:
                       "${firstNameController.text} ${lastNameController.text}",
