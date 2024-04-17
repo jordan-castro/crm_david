@@ -1,9 +1,5 @@
-import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
-import 'package:crm_david/screens/new_customer.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 class DatabaseConfigScreen extends StatefulWidget {

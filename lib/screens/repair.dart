@@ -1,5 +1,7 @@
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
+import 'package:crm_david/screens/print_screen.dart';
+import 'package:crm_david/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +16,8 @@ class RepairPartsScreen extends StatefulWidget {
 }
 
 class _RepairPartsScreenState extends State<RepairPartsScreen> {
-  // final TextEditingController price = TextEditingController();
   final TextEditingController qty = TextEditingController();
+  final TextEditingController price = TextEditingController(text: "0.00");
   final TextStyle labelStyle = const TextStyle(
     fontSize: 20.0,
     fontWeight: FontWeight.bold,
@@ -30,8 +32,10 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: removethis
-    // Provider.of<LoadData>(context, listen: false).init();
+    // Quick access to the model
+    final provider = Provider.of<LoadData>(context, listen: false);
+    // Default text for the price
+    price.text = provider.parts[provider.partId].unitPrice.toStringAsFixed(2);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,8 +63,6 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                   loadData.loadParts();
                   return child!;
                 }
-                print(loadData.partId);
-
                 return SearchableDropdown(
                   controller: partNumber,
                   items: [
@@ -80,6 +82,8 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                     setState(() {
                       description.selectedItem.value =
                           description.items![loadData.partId];
+                      price.text =
+                          loadData.parts[val].unitPrice.toStringAsFixed(2);
                     });
                   },
                   backgroundDecoration: (child) => Card(
@@ -109,8 +113,6 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                   return child!;
                 }
 
-                print(loadData.partId);
-
                 return SearchableDropdown(
                   controller: description,
                   items: [
@@ -128,6 +130,8 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                     setState(() {
                       partNumber.selectedItem.value =
                           partNumber.items![loadData.partId];
+                      price.text =
+                          loadData.parts[val].unitPrice.toStringAsFixed(2);
                     });
                   },
                   backgroundDecoration: (child) => Card(
@@ -150,20 +154,28 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               "Price",
               style: labelStyle,
             ),
-            Consumer<LoadData>(
-              builder: (context, loadData, child) {
-                if (loadData.parts.isEmpty) {
-                  loadData.loadParts();
-                  return child!;
-                }
-
-                var part = loadData.parts[loadData.partId];
-
-                return Text(
-                    "\$${(part.unitPrice * quantity).toStringAsFixed(2)}");
-              },
-              child: const LinearProgressIndicator(),
+            CustomTextField(
+              controller: price,
+              label: "Price",
+              hint: "Price",
+              onSubmit: () {},
+              padding: const EdgeInsets.all(0),
             ),
+            // Consumer<LoadData>(
+            //   builder: (context, loadData, child) {
+            //     if (loadData.parts.isEmpty) {
+            //       loadData.loadParts();
+            //       return child!;
+            //     }
+
+            //     var part = loadData.parts[loadData.partId];
+
+            //     return Text(
+            //       "\$${(part.unitPrice * quantity).toStringAsFixed(2)}",
+            //     );
+            //   },
+            //   child: const LinearProgressIndicator(),
+            // ),
             const SizedBox(
               height: 10,
             ),
@@ -178,8 +190,11 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               onSubmit: () {},
               isNumber: true,
               onChange: (value) {
+                final pprice = double.parse(price.text);
+
                 setState(() {
                   quantity = int.parse(value);
+                  price.text = "\$${(pprice * quantity).toStringAsFixed(2)}";
                 });
               },
             ),
@@ -218,9 +233,10 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  PrintScreen.routeName,
+                                );
                               },
                               child: Text("No"),
                             ),
@@ -231,7 +247,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                                   RepairPartsScreen.routeName,
                                 );
                               },
-                              child: Text("Yes"),
+                              child: const Text("Yes"),
                             )
                           ],
                         );

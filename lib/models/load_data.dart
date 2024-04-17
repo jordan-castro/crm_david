@@ -99,6 +99,7 @@ class TicketData {
   final String description;
   final String serialNumber;
   final List<String> accessories;
+  final String passcode;
 
   TicketData({
     required this.manufacture,
@@ -107,6 +108,7 @@ class TicketData {
     required this.description,
     required this.serialNumber,
     required this.accessories,
+    required this.passcode,
   });
 }
 

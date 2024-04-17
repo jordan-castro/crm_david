@@ -316,24 +316,27 @@ Future<bool> setInsertService({
   required TicketData ticketData,
   required RMA currentRma,
 }) async {
-  // var res = await conn!.execute("""
-  //   INSERT INTO `services`
-  //   (`clientid`, `rmaid`, `clientname`, `phone`, `opendate`, `description`, `serialnumber`, `technician`, `accessories`, `technicianid`,
-  //   `warrantyid`, `statusid`
-  //   )
-  //   VALUES
-  // (:clientid, :rmaid, :clientname, :phone, :opendate, :description, :serialnumber, :technician, :accessories, :technicianid, :warranty,
-  // :status
-  // );
-
   final response = await http.post(
     apiUrl,
     body: {
       "action": "insert",
       "query": """
               INSERT INTO `services`
-              (`clientid`, `rmaid`, `clientname`, `phone`, `opendate`, `description`, `serialnumber`, `technician`, `accessories`, `technicianid`, 
-      `warrantyid`, `statusid`, `priority`
+              (
+                `clientid`, 
+                `rmaid`, 
+                `clientname`, 
+                `phone`, 
+                `opendate`, 
+                `description`, 
+                `serialnumber`, 
+                `technician`, 
+                `accessories`, 
+                `technicianid`, 
+                `warrantyid`, 
+                `statusid`, 
+                `priority`,
+                `custom5`
        )
        VALUES (
         ${customer.id}, 
@@ -348,7 +351,8 @@ Future<bool> setInsertService({
         ${ticketData.technician.id}, 
         1,
         1,
-        'Standard'
+        'Standard',
+        ${ticketData.passcode}
         );
 
 """,

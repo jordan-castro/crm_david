@@ -26,6 +26,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
   );
   final TextEditingController serialNumber = TextEditingController();
   final TextEditingController faultDescription = TextEditingController();
+  final TextEditingController passcodeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                     loadData.loadManufactures();
                     return child!;
                   }
-    
+
                   return SearchableDropdown(
                     items: [
                       for (var man in loadData.manufacturers)
@@ -95,7 +96,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                     loadData.loadModels();
                     return child!;
                   }
-    
+
                   return SearchableDropdown(
                     items: [
                       for (var man in loadData.models)
@@ -122,6 +123,16 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                   );
                 },
                 child: const CircularProgressIndicator(),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                controller: passcodeController,
+                label: "Passcode",
+                hint: "Passcode",
+                onSubmit: () {},
+                padding: const EdgeInsets.all(0),
               ),
               CustomTextField(
                 controller: serialNumber,
@@ -154,7 +165,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                     loadData.loadTechnicians();
                     return child!;
                   }
-    
+
                   return SearchableDropdown(
                     items: [
                       for (var tech in loadData.techs)
@@ -195,7 +206,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                     loadData.loadAccessories();
                     return child!;
                   }
-    
+
                   return Column(
                     children: [
                       for (var accessory in loadData.accesories)
@@ -208,7 +219,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                             if (value == null) {
                               return;
                             }
-    
+
                             int index = loadData.accesories.indexOf(
                               accessory,
                             );
@@ -220,7 +231,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                             } else {
                               loadData.selectedAccessories.remove(index);
                             }
-    
+
                             loadData.update();
                           },
                           title: Text(accessory.label),
@@ -256,9 +267,10 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                         description: faultDescription.text,
                         serialNumber: serialNumber.text,
                         accessories: loadData.selectedAccessoriesAsListString,
+                        passcode: passcodeController.text,
                       ),
                     );
-    
+
                     if (!save) {
                       // Negative
                       showToast(
@@ -267,7 +279,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                       );
                       return;
                     }
-    
+
                     // SHOW ALERT DIALOG
                     showDialog(
                         context: context,
