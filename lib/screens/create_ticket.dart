@@ -282,32 +282,33 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
 
                     // SHOW ALERT DIALOG
                     showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Add item repairs?"),
-                            actions: [
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.popAndPushNamed(
-                                    context,
-                                    RepairPartsScreen.routeName,
-                                  );
-                                },
-                                icon: const Text("Yes"),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.popAndPushNamed(
-                                    context,
-                                    PrintScreen.routeName,
-                                  );
-                                },
-                                icon: const Text("No"),
-                              ),
-                            ],
-                          );
-                        });
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Add item repairs?"),
+                          actions: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.popAndPushNamed(
+                                  context,
+                                  RepairPartsScreen.routeName,
+                                );
+                              },
+                              icon: const Text("Yes"),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.popAndPushNamed(
+                                  context,
+                                  PrintScreen.routeName,
+                                );
+                              },
+                              icon: const Text("No"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith(
