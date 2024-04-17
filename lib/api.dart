@@ -308,7 +308,7 @@ Future<bool> setNewCustomer(CustomerData data) async {
     }),
   );
 
-  return response.body == "1";
+  return response.statusCode == 200;
 }
 
 Future<bool> setInsertService({
