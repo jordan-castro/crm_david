@@ -54,7 +54,7 @@ Future<List<CustomerData>> getCustomers() async {
       CustomerData(
         name: "${row['fname']} ${row['lname']}",
         phone: row['phone'],
-        mobile: row['mobile'] ?? "",
+        mobile: row['mobile1'] ?? "",
         email: row['email'],
         id: int.parse(row['id']),
       ),
@@ -255,7 +255,7 @@ Future<CustomerData?> getFromData(CustomerData data) async {
     },
   );
 
-  if (response.body == "0") {
+  if (response.body == "[]") {
     return null;
   }
 
@@ -266,7 +266,7 @@ Future<CustomerData?> getFromData(CustomerData data) async {
   return CustomerData(
     name: "${jsonResponse['fname']} ${jsonResponse['lname']}",
     phone: jsonResponse['phone'],
-    mobile: jsonResponse['mobile'],
+    mobile: jsonResponse['mobile1'],
     email: jsonResponse['email'],
     id: int.parse(jsonResponse['id']),
   );
@@ -298,15 +298,61 @@ Future<int> getLastServiceId() async {
 Future<bool> setNewCustomer(CustomerData data) async {
   final response = await http.post(
     apiUrl,
-    body: jsonEncode({
+    body: {
       "action": "insert",
       "query": """
             INSERT INTO `customers` 
-            (fname, lname, email, phone) 
-            VALUES ('${data.name.split(" ").first}', '${data.name.split(" ").last}', '${data.email}', '${data.phone}')
+            (
+              fname, 
+              lname, 
+              email, 
+              phone,
+              mobile1,
+              registerDate,
+              position,
+              vatnumber,
+              vatId,
+              currency,
+              notes,
+              deleted,
+              emailoptin,
+              website,
+              payment_method,
+              due_date,
+              shipping_address,
+              shipping_address2,
+              shipping_city,
+              shipping_country,
+              vat_identification
+            ) 
+            VALUES (
+              '${data.name.split(" ").first}', 
+              '${data.name.split(" ").last}', 
+              '${data.email}', 
+              '${data.phone}',
+              '${data.mobile}',
+              '${DateTime.now().toString().split(" ").first}',
+              '',
+              '',
+              1,
+              2,
+              '',
+              0,
+              0,
+              '',
+              7,
+              2,
+              '',
+              '',
+              '',
+              '',
+              ''
+            )
       """,
-    }),
+    },
   );
+
+  print(response.body);
 
   return response.statusCode == 200;
 }
@@ -336,7 +382,9 @@ Future<bool> setInsertService({
                 `warrantyid`, 
                 `statusid`, 
                 `priority`,
-                `custom5`
+                `custom1`,
+                `machinetype`,
+                `supplier`
        )
        VALUES (
         ${customer.id}, 
@@ -352,8 +400,10 @@ Future<bool> setInsertService({
         1,
         1,
         'Standard',
-        ${ticketData.passcode}
-        );
+        '${ticketData.passcode}',
+        '${ticketData.model.name}',
+        '${ticketData.manufacture.brand_name}'
+        )
 
 """,
     },
@@ -372,11 +422,11 @@ Future<bool> setSaveRMA({required int serviceId, required RMA rma}) async {
     body: {
       "action": "insert",
       "query":
-          "INSERT INTO `increment_services` (`service_id`, `rmaid`, `number`) VALUES ($serviceId, '${rma.id}', ${rma.id.split("-").last});",
+          "INSERT INTO `increment_services` (`service_id`, `rmaid`, `number`) VALUES ($serviceId, '${rma.id}', ${rma.id.split("-").last})",
     },
   );
 
-  return response.body == '1';
+  return response.statusCode == 200;
 }
 
 Future<bool> setAddProductToService({
