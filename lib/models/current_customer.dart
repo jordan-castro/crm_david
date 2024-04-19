@@ -89,9 +89,10 @@ class CurrentCustomerModel with ChangeNotifier {
   }
 
   /// Load the `customer` from CustomerData not including id.
-  Future<bool> loadFromData(CustomerData data, {bool update = true}) async {
+  Future<bool> loadFromData(CustomerData data) async {
     final result = await getFromData(data);
     if (result == null) {
+      print("Result is null");
       return false;
     }
     customer = result;

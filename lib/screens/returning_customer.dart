@@ -1,4 +1,5 @@
 import 'package:crm_david/models/current_customer.dart';
+import 'package:crm_david/screens/create_ticket.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
@@ -65,24 +66,54 @@ class _ReturningCustomerScreenState extends State<ReturningCustomerScreen> {
           ),
           FilledButton(
             onPressed: () async {
-              // Add to DB
-              var result = await Provider.of<CurrentCustomerModel>(
+              final ccModel = Provider.of<CurrentCustomerModel>(
                 context,
                 listen: false,
-              ).newCustomer(
-                CustomerData(
-                  name:
-                      "${firstNameController.text} ${lastNameController.text}",
-                  phone: mobileNumberController.text,
-                  mobile: mobileNumberController.text,
-                  email: emailController.text,
-                ),
+              );
+              final customerData = CustomerData(
+                name: "${firstNameController.text} ${lastNameController.text}",
+                phone: mobileNumberController.text,
+                mobile: mobileNumberController.text,
+                email: emailController.text,
               );
 
-              showToast(
-                "Result is $result",
-                position: ToastPosition.bottom,
-              );
+              // Check if customer already exists
+              if (await ccModel.loadFromData(customerData)) {
+                showToast(
+                  "Customer already exists",
+                  position: ToastPosition.bottom,
+                );
+
+                Navigator.pushReplacementNamed(
+                  context,
+                  CreateTicketScreen.routeName,
+                );
+                return;
+              }
+
+              // Add to DB
+              var result = await ccModel.newCustomer(customerData);
+
+              // Meaning we got a result
+              if (result) {
+                await ccModel.loadCustomers();
+                if (ccModel.allCustomers.isNotEmpty) {
+                  ccModel.customer = ccModel.allCustomers.last;
+                  Navigator.pushReplacementNamed(
+                    context,
+                    CreateTicketScreen.routeName,
+                  );
+                } else {
+                  showToast(
+                    "Failed to create new customer.",
+                    position: ToastPosition.bottom,
+                  );
+                }
+              }
+              // showToast(
+              //   "Result is $result",
+              //   position: ToastPosition.bottom,
+              // );
             },
             child: const Text("Insert"),
           ),
