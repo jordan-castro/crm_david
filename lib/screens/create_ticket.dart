@@ -5,6 +5,7 @@ import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:crm_david/screens/print_screen.dart';
 import 'package:crm_david/screens/repair.dart';
+import 'package:crm_david/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -300,7 +301,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                               onPressed: () {
                                 Navigator.popAndPushNamed(
                                   context,
-                                  PrintScreen.routeName,
+                                  WelcomeScreen.routeName,
                                 );
                               },
                               icon: const Text("No"),
