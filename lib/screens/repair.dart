@@ -30,13 +30,10 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
   final SearchableDropdownController description =
       SearchableDropdownController();
 
+  bool isPriceModified = false;
+
   @override
   Widget build(BuildContext context) {
-    // Quick access to the model
-    final provider = Provider.of<LoadData>(context, listen: false);
-    // Default text for the price
-    price.text = provider.parts[provider.partId].unitPrice.toStringAsFixed(2);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Repair"),
@@ -154,28 +151,33 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               "Price",
               style: labelStyle,
             ),
-            CustomTextField(
-              controller: price,
-              label: "Price",
-              hint: "Price",
-              onSubmit: () {},
-              padding: const EdgeInsets.all(0),
+            Consumer<LoadData>(
+              builder: (context, loadData, child) {
+                if (loadData.parts.isEmpty) {
+                  return child!;
+                }
+
+                // Load initial price
+                if (!isPriceModified) {
+                  price.text =
+                      "\$${(loadData.parts[loadData.partId].unitPrice * quantity).toStringAsFixed(2)}";
+                }
+
+                return CustomTextField(
+                  controller: price,
+                  label: "Price",
+                  hint: "Price",
+                  onSubmit: () {},
+                  onChange: (val) {
+                    if (!isPriceModified) {
+                      setState(() => isPriceModified = true);
+                    }
+                  },
+                  padding: const EdgeInsets.all(0),
+                );
+              },
+              child: const CircularProgressIndicator(),
             ),
-            // Consumer<LoadData>(
-            //   builder: (context, loadData, child) {
-            //     if (loadData.parts.isEmpty) {
-            //       loadData.loadParts();
-            //       return child!;
-            //     }
-
-            //     var part = loadData.parts[loadData.partId];
-
-            //     return Text(
-            //       "\$${(part.unitPrice * quantity).toStringAsFixed(2)}",
-            //     );
-            //   },
-            //   child: const LinearProgressIndicator(),
-            // ),
             const SizedBox(
               height: 10,
             ),
@@ -190,11 +192,12 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               onSubmit: () {},
               isNumber: true,
               onChange: (value) {
-                final pprice = double.parse(price.text);
+                final loadData = Provider.of<LoadData>(context, listen: false);
 
                 setState(() {
                   quantity = int.parse(value);
-                  price.text = "\$${(pprice * quantity).toStringAsFixed(2)}";
+                  // price.text =
+                  //     "\$${(loadData.parts[loadData.partId].unitPrice * quantity).toStringAsFixed(2)}";
                 });
               },
             ),
@@ -213,7 +216,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                       description: part.description,
                       productId: part.productId,
                       qty: int.parse(qty.text),
-                      unitPrice: double.parse(qty.text) * part.unitPrice,
+                      unitPrice: double.parse(price.text.replaceAll("\$", "")),
                     ),
                   );
 
@@ -228,21 +231,22 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text("Part added succesffuly."),
-                          content: Text("Would you like to add a new part?"),
+                          title: const Text("Part added succesffuly."),
+                          content:
+                              const Text("Would you like to add a new part?"),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.pushReplacementNamed(
                                   context,
-                                  PrintScreen.routeName,
+                                  WelcomeScreen.routeName,
                                 );
                               },
-                              child: Text("No"),
+                              child: const Text("No"),
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.popAndPushNamed(
+                                Navigator.pushReplacementNamed(
                                   context,
                                   RepairPartsScreen.routeName,
                                 );

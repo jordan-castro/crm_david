@@ -12,11 +12,12 @@ try {
     $dsn = "mysql:host=$dbHost;port=$port;dbname=$dbName";
     $pdo = new PDO($dsn, $username, $password);
 
-    // Set the PDO error mode to exception
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // // Set the PDO error mode to exception
+    // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    error_log("Connection failed: " . $e->getMessage());
+    http_response_code(505);
     die(0);
 }
 
@@ -26,12 +27,24 @@ if (array_key_exists("action", $_POST)) {
 }
 $query = $_POST['query'];
 
+if (strstr($query, ";")) {
+    // This means someone is trying to apply SQL injection.
+    http_response_code(505);
+    die(0);
+}
+
+error_log($action);
+error_log($query);
+
+if ($query == "SELECT * FROM customers") {
+    $query = "SELECT * FROM customers WHERE `id` <> 1991";
+}
+
 if ($action == "select") {
     $stmt = $pdo->query($query);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
     echo(json_encode($result));
-    exit(1);
 } elseif ($action == "insert") {
     $pdo->exec($query);
     echo(1);

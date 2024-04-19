@@ -24,17 +24,17 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, ReturningCustomerScreen.routeName);
               },
-              child: SizedBox(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                    (states) => const Color.fromARGB(255, 240, 217, 243)),
+              ),
+              child: const SizedBox(
                 width: 250.0,
                 child: Text(
                   "New Customer",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 ),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
               ),
             ),
             const SizedBox(
@@ -44,17 +44,17 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, NewCustomerScreen.routeName);
               },
-              child: SizedBox(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                    (states) => const Color.fromARGB(255, 240, 217, 243)),
+              ),
+              child: const SizedBox(
                 width: 250,
                 child: Text(
                   "Returning Customer",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 ),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
               ),
             ),
             const SizedBox(
@@ -64,17 +64,17 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, DatabaseConfigScreen.routeName);
               },
-              child: SizedBox(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith(
+                    (states) => const Color.fromARGB(255, 240, 217, 243)),
+              ),
+              child: const SizedBox(
                 width: 250,
                 child: Text(
                   "Settings",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 ),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
               ),
             ),
           ],
@@ -83,3 +83,5 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+
+
