@@ -384,7 +384,9 @@ Future<bool> setInsertService({
                 `priority`,
                 `custom1`,
                 `machinetype`,
-                `supplier`
+                `supplier`,
+                `estimatedate`,
+                `rma_status`
        )
        VALUES (
         ${customer.id}, 
@@ -402,7 +404,9 @@ Future<bool> setInsertService({
         'Standard',
         '${ticketData.passcode}',
         '${ticketData.model.name}',
-        '${ticketData.manufacture.brand_name}'
+        '${ticketData.manufacture.brand_name}',
+        '${currentRma.dateTime.toString().split(".")[0]}',
+        'Awaiting Diagnostic'
         )
 
 """,

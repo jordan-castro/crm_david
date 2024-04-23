@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
-import 'package:crm_david/screens/print_screen.dart';
 import 'package:crm_david/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
@@ -173,6 +174,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                       setState(() => isPriceModified = true);
                     }
                   },
+                  isNumber: true,
                   padding: const EdgeInsets.all(0),
                 );
               },
@@ -192,12 +194,9 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               onSubmit: () {},
               isNumber: true,
               onChange: (value) {
-                final loadData = Provider.of<LoadData>(context, listen: false);
 
                 setState(() {
                   quantity = int.parse(value);
-                  // price.text =
-                  //     "\$${(loadData.parts[loadData.partId].unitPrice * quantity).toStringAsFixed(2)}";
                 });
               },
             ),
