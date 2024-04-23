@@ -3,10 +3,13 @@
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
 import 'package:crm_david/screens/welcome.dart';
+import 'package:crm_david/widgets/searchable_dropdown/controller.dart';
+import 'package:crm_david/widgets/searchable_dropdown/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart';
+import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart'
+    as searchable_dropdown;
 
 class RepairPartsScreen extends StatefulWidget {
   static const routeName = "/repairParts";
@@ -26,8 +29,9 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
   bool hasPart = false;
   int quantity = 0;
 
-  final SearchableDropdownController partNumber =
-      SearchableDropdownController();
+  final SearchableDropdownController partNumber = SearchableDropdownController(
+    textInputType: TextInputType.number,
+  );
   final SearchableDropdownController description =
       SearchableDropdownController();
 
@@ -65,7 +69,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                   controller: partNumber,
                   items: [
                     for (var part in loadData.parts)
-                      SearchableDropdownMenuItem(
+                      searchable_dropdown.SearchableDropdownMenuItem(
                         label: "${part.productId}",
                         child: Text(
                           "${part.productId}",
@@ -115,7 +119,7 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                   controller: description,
                   items: [
                     for (var part in loadData.parts)
-                      SearchableDropdownMenuItem(
+                      searchable_dropdown.SearchableDropdownMenuItem(
                         value: loadData.parts.indexOf(part),
                         label: part.description,
                         child: Text(part.description),
@@ -194,7 +198,6 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
               onSubmit: () {},
               isNumber: true,
               onChange: (value) {
-
                 setState(() {
                   quantity = int.parse(value);
                 });

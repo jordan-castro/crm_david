@@ -1,10 +1,13 @@
 import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/create_ticket.dart';
+import 'package:crm_david/widgets/searchable_dropdown/controller.dart';
+import 'package:crm_david/widgets/searchable_dropdown/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart';
+import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart'
+    as searchable_drop_down;
 
 class NewCustomerScreen extends StatefulWidget {
   static const routeName = "/returning";
@@ -24,7 +27,9 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
 
   final nameController = SearchableDropdownController();
   final emailController = SearchableDropdownController();
-  final phoneNumberController = SearchableDropdownController();
+  final phoneNumberController = SearchableDropdownController(
+    textInputType: TextInputType.number,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +65,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   controller: nameController,
                   items: [
                     for (var customer in customerModel.allCustomers)
-                      SearchableDropdownMenuItem(
+                      searchable_drop_down.SearchableDropdownMenuItem(
                         label: customer.name,
                         child: Text(customer.name),
                         value: customerModel.allCustomers.indexOf(customer),
@@ -110,7 +115,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   controller: emailController,
                   items: [
                     for (var customer in customerModel.allCustomers)
-                      SearchableDropdownMenuItem(
+                      searchable_drop_down.SearchableDropdownMenuItem(
                         label: customer.email,
                         child: Text(customer.email),
                         value: customerModel.allCustomers.indexOf(customer),
@@ -160,7 +165,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   controller: phoneNumberController,
                   items: [
                     for (var customer in customerModel.allCustomers)
-                      SearchableDropdownMenuItem(
+                      searchable_drop_down.SearchableDropdownMenuItem(
                         label: customer.getNumber(),
                         child: Text(customer.getNumber()),
                         value: customerModel.allCustomers.indexOf(customer),
