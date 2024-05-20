@@ -1,4 +1,5 @@
 import 'package:crm_david/models/load_data.dart';
+import 'package:crm_david/models/theme_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,55 +20,81 @@ class _DatabaseConfigScreenState extends State<DatabaseConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Settings"),
-          backgroundColor: Colors.blue,
-        ),
-        body: Consumer<LoadData>(
-          builder: (context, loadData, child) {
-            if (loadData.settings.isEmpty) {
-              loadData.loadSettings();
-              return child!;
-            }
+    final themeModel = Provider.of<ThemeModel>(context, listen: false);
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var setting in loadData.settings)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            setting['name'],
-                            style: const TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5.0,
-                          ),
-                          Text(
-                            setting['value'],
-                            style: const TextStyle(fontSize: 15.0),
-                          ),
-                          const SizedBox(
-                            height: 20.0,
-                          ),
-                        ],
-                      )
-                  ],
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Settings"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text button with backgroud color
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: themeModel.darkTheme.primaryColor,
               ),
-            );
-          },
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        ));
+              onPressed: () {
+                themeModel.setTheme(themeModel.darkTheme);
+              },
+              child: const Text(
+                'Dark Theme',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            // Text button for light theme
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: themeModel.lightTheme.primaryColor,
+              ),
+              onPressed: () {
+                themeModel.setTheme(themeModel.lightTheme);
+              },
+              child: const Text(
+                'Light Theme',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            // Blue theme
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: themeModel.blueTheme.primaryColor,
+              ),
+              onPressed: () {
+                themeModel.setTheme(themeModel.blueTheme);
+              },
+              child: const Text(
+                'Blue Theme',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            // Pink theme button
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: themeModel.pinkTheme.primaryColor,
+              ),
+              onPressed: () {
+                themeModel.setTheme(themeModel.pinkTheme);
+              },
+              child: const Text(
+                'Pink Theme',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

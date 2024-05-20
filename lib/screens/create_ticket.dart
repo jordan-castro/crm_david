@@ -34,7 +34,6 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create New Ticket"),
-        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(

@@ -13,7 +13,6 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome!"),
-        backgroundColor: Colors.blue,
       ),
       body: Center(
         child: Column(
@@ -24,10 +23,6 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, ReturningCustomerScreen.routeName);
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
-              ),
               child: const SizedBox(
                 width: 250.0,
                 child: Text(
@@ -44,10 +39,6 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, NewCustomerScreen.routeName);
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
-              ),
               child: const SizedBox(
                 width: 250,
                 child: Text(
@@ -64,10 +55,6 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, DatabaseConfigScreen.routeName);
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith(
-                    (states) => const Color.fromARGB(255, 240, 217, 243)),
-              ),
               child: const SizedBox(
                 width: 250,
                 child: Text(

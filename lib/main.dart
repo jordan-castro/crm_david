@@ -1,5 +1,6 @@
 import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
+import 'package:crm_david/models/theme_model.dart';
 import 'package:crm_david/screens/ask_to_print.dart';
 import 'package:crm_david/screens/create_ticket.dart';
 import 'package:crm_david/screens/settings.dart';
@@ -13,7 +14,12 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const CRMDavidApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeModel(),
+      child: const CRMDavidApp(),
+    ),
+  );
 }
 
 class CRMDavidApp extends StatelessWidget {
@@ -31,22 +37,27 @@ class CRMDavidApp extends StatelessWidget {
             create: (_) => LoadData(),
           ),
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: const WelcomeScreen(),
-          routes: {
-            WelcomeScreen.routeName: (context) => const WelcomeScreen(),
-            NewCustomerScreen.routeName: (context) => const NewCustomerScreen(),
-            ReturningCustomerScreen.routeName: (context) =>
-                const ReturningCustomerScreen(),
-            CreateTicketScreen.routeName: (context) =>
-                const CreateTicketScreen(),
-            AskToPringScreen.routeName: (context) => const AskToPringScreen(),
-            RepairPartsScreen.routeName: (context) => const RepairPartsScreen(),
-            PrintScreen.routeName: (context) => const PrintScreen(),
-            DatabaseConfigScreen.routeName: (context) =>
-                const DatabaseConfigScreen(),
-          },
+        child: Consumer<ThemeModel>(
+          builder: (context, model, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: const WelcomeScreen(),
+              routes: {
+                WelcomeScreen.routeName: (context) => const WelcomeScreen(),
+                NewCustomerScreen.routeName: (context) => const NewCustomerScreen(),
+                ReturningCustomerScreen.routeName: (context) =>
+                    const ReturningCustomerScreen(),
+                CreateTicketScreen.routeName: (context) =>
+                    const CreateTicketScreen(),
+                AskToPringScreen.routeName: (context) => const AskToPringScreen(),
+                RepairPartsScreen.routeName: (context) => const RepairPartsScreen(),
+                PrintScreen.routeName: (context) => const PrintScreen(),
+                DatabaseConfigScreen.routeName: (context) =>
+                    const DatabaseConfigScreen(),
+              },
+              theme: model.getTheme(),
+            );
+          }
         ),
       ),
     );

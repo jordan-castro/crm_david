@@ -36,7 +36,6 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Returning Customer"),
-        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(

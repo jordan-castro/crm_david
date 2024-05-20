@@ -26,7 +26,6 @@ class _ReturningCustomerScreenState extends State<ReturningCustomerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("New Customer"),
-        backgroundColor: Colors.blue,
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,

@@ -42,7 +42,6 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Repair"),
-        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
