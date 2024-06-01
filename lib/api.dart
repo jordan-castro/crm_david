@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:crm_david/models/current_customer.dart';
 import 'package:crm_david/models/load_data.dart';
+import 'package:crm_david/utils/parser.dart';
 import 'package:http/http.dart' as http;
 
-// final apiUrl = Uri.parse("http://localhost:8080/test.php");
-final apiUrl = Uri.parse("https://wirelessplanet310.com/rma/testing.php");
+final apiUrl = Uri.parse("http://localhost:8080/test.php");
+// final apiUrl = Uri.parse("https://wirelessplanet310.com/rma/testing.php");
 
 // GETTERS
 
@@ -56,7 +57,7 @@ Future<List<CustomerData>> getCustomers() async {
         phone: row['phone'],
         mobile: row['mobile1'] ?? "",
         email: row['email'],
-        id: int.parse(row['id']),
+        id: parseIntoInt(row['id']),
       ),
     );
   }
@@ -82,7 +83,7 @@ Future<List<Manufacture>> getManufactures() async {
   for (var row in jsonResponse) {
     mans.add(
       Manufacture(
-        id: int.parse(row['id']),
+        id: parseIntoInt(row['id']),
         brand_name: row['brand_name'],
       ),
     );
@@ -109,7 +110,7 @@ Future<List<Model>> getModels() async {
   for (var row in jsonResponse) {
     models.add(
       Model(
-        id: int.parse(row['id']),
+        id: parseIntoInt(row['id']),
         name: row['name'],
       ),
     );
@@ -134,9 +135,9 @@ Future<List<Part>> getParts() async {
     parts.add(
       Part(
         description: row['description'],
-        productId: int.parse(row['productId']),
-        qty: double.parse(row['qty']).toInt(),
-        unitPrice: double.parse(row['unitPrice']),
+        productId: parseIntoInt(row['productId']),
+        qty: parseIntoDouble(row['qty']).toInt(),
+        unitPrice: parseIntoDouble(row['unitPrice']),
       ),
     );
   }
@@ -162,7 +163,7 @@ Future<List<Technician>> getTechs() async {
     print(row);
     techs.add(
       Technician(
-        id: int.parse(row['id']),
+        id: parseIntoInt(row['id']),
         tech_name: row['TechName'],
         email: row['Email'],
         username: row['username'],
@@ -268,7 +269,7 @@ Future<CustomerData?> getFromData(CustomerData data) async {
     phone: jsonResponse['phone'],
     mobile: jsonResponse['mobile1'],
     email: jsonResponse['email'],
-    id: int.parse(jsonResponse['id']),
+    id: parseIntoInt(jsonResponse['id']),
   );
 }
 
@@ -291,7 +292,7 @@ Future<int> getLastServiceId() async {
     return -1;
   }
 
-  return int.parse(jsonDecode(response.body)[0]['id']);
+  return parseIntoInt(jsonDecode(response.body)[0]['id']);
 }
 
 // Setters

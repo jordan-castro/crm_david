@@ -123,11 +123,25 @@ class LoadData with ChangeNotifier {
   int currentServiceId = -1;
   JSONArray settings = [];
 
+  List<Part> partsSelected = [];
+
   int manId = 0;
   int modelId = 0;
   int techId = 0;
   int partId = 0;
   List<int> selectedAccessories = [];
+
+  Model get currentModel {
+    return models[modelId];
+  }
+
+  Manufacture get currentManufacture {
+    return manufacturers[manId];
+  }
+
+  Technician get currentTechnician {
+    return techs[techId];
+  }
 
   List<String> get selectedAccessoriesAsListString {
     List<String> list = [];
@@ -138,6 +152,7 @@ class LoadData with ChangeNotifier {
   }
 
   Future<void> loadManufactures() async {
+    partsSelected.clear();
     var results = await getManufactures();
     if (results.isEmpty) {
       return;
@@ -164,22 +179,6 @@ class LoadData with ChangeNotifier {
     models.clear();
     models = result;
 
-    // var results = await conn!.execute("SELECT * FROM `devices`");
-    // if (results.numOfRows == 0) {
-    //   return;
-    // }
-
-    // models.clear();
-
-    // for (var row in results.rows) {
-    //   models.add(
-    //     Model(
-    //       id: int.parse(row.colAt(0)!),
-    //       name: row.colAt(1)!,
-    //     ),
-    //   );
-    // }
-
     notifyListeners();
   }
 
@@ -191,29 +190,6 @@ class LoadData with ChangeNotifier {
 
     techs.clear();
     techs = result;
-
-    // if (!isConnected()) {
-    //   return;
-    // }
-
-    // var results = await conn!.execute("SELECT * FROM `technicians`");
-    // if (results.numOfRows == 0) {
-    //   return;
-    // }
-
-    // techs.clear();
-
-    // for (var row in results.rows) {
-    //   techs.add(
-    //     Technician(
-    //       id: int.parse(row.colAt(0)!),
-    //       tech_name: row.colAt(1)!,
-    //       email: row.colAt(2)!,
-    //       username: row.colAt(3)!,
-    //       password: row.colAt(4)!,
-    //     ),
-    //   );
-    // }
 
     notifyListeners();
   }
@@ -238,22 +214,6 @@ class LoadData with ChangeNotifier {
   }
 
   Future<RMA?> getMostRecentRMA() async {
-    // COMES FROM `increment_services`
-    // if (!isConnected()) {
-    // return null;
-    // }
-
-    // var results = await conn!.execute(
-    //   "SELECT * FROM `increment_services` ORDER BY `id` DESC LIMIT 1",
-    // );
-    // if (results.numOfRows == 0) {
-    //   return null;
-    // }
-
-    // return RMA(
-    //   id: results.rows.first.colByName("rmaid")!,
-    // );
-
     final result = await getMostRecentRMA_ServerCall();
     if (result == null) {
       return null;
@@ -317,6 +277,9 @@ class LoadData with ChangeNotifier {
   Future<bool> addProductToService({
     required Part part,
   }) async {
+    partsSelected.add(part);
+    notifyListeners();
+
     if (currentServiceId == -1) {
       return false;
     }

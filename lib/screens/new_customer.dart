@@ -223,7 +223,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                   listen: false,
                 ).loadTechnicians();
 
-                Navigator.pushNamed(
+                Navigator.popAndPushNamed(
                   context,
                   CreateTicketScreen.routeName,
                 );

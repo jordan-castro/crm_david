@@ -22,10 +22,14 @@ try {
 }
 
 $action = "select";
-if (array_key_exists("action", $_POST)) {
+if (array_key_exists("action", $_POST) or array_key_exists("action", $_GET)) {
     $action = $_POST['action'];
 }
 $query = $_POST['query'];
+
+if ($query == null) {
+    $query = $_GET['query'];
+}
 
 if (strstr($query, ";")) {
     // This means someone is trying to apply SQL injection.

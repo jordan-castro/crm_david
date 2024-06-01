@@ -2,7 +2,7 @@
 
 import 'package:crm_david/models/load_data.dart';
 import 'package:crm_david/screens/new_customer.dart';
-import 'package:crm_david/screens/welcome.dart';
+import 'package:crm_david/screens/print_screen.dart';
 import 'package:crm_david/widgets/searchable_dropdown/controller.dart';
 import 'package:crm_david/widgets/searchable_dropdown/widget.dart';
 import 'package:flutter/material.dart';
@@ -212,6 +212,8 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                   final loadData =
                       Provider.of<LoadData>(context, listen: false);
                   final part = loadData.parts[loadData.partId];
+                  // add part
+                  // loadData.partsSelected.add(part);
                   final res = await loadData.addProductToService(
                     part: Part(
                       description: part.description,
@@ -226,37 +228,39 @@ class _RepairPartsScreenState extends State<RepairPartsScreen> {
                       "Did not work",
                       position: ToastPosition.bottom,
                     );
+                    return;
                   }
 
                   showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Part added succesffuly."),
-                          content:
-                              const Text("Would you like to add a new part?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  WelcomeScreen.routeName,
-                                );
-                              },
-                              child: const Text("No"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  RepairPartsScreen.routeName,
-                                );
-                              },
-                              child: const Text("Yes"),
-                            )
-                          ],
-                        );
-                      });
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("Part added succesffuly."),
+                        content:
+                            const Text("Would you like to add a new part?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.popAndPushNamed(
+                                context,
+                                PrintScreen.routeName,
+                              );
+                            },
+                            child: const Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.popAndPushNamed(
+                                context,
+                                RepairPartsScreen.routeName,
+                              );
+                            },
+                            child: const Text("Yes"),
+                          )
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith(
